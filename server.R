@@ -8,11 +8,14 @@
 #
 
 library(shiny)
+library(caret)
+library(pROC)
+library(ModelMetrics)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
     
-    output$contents <- renderTable({
+    output$contents = renderTable({
         
         # input$file1 will be NULL initially. After the user selects
         # and uploads a file, head of that data file by default,
@@ -21,17 +24,27 @@ shinyServer(function(input, output) {
         req(input$file1)
         
         df <- read.csv(input$file1$datapath,
-                       header = input$header,
+                       header = TRUE,
                        sep = input$sep,
-                       quote = input$quote)
-        
-        if(input$disp == "head") {
-            return(head(df))
-        }
-        else {
-            return(df)
-        }
-        
+                       quote = '"')
+    })
+    
+    output$ROC = renderPlot({
+      
+      library(mlbench)
+      data('PimaIndiansDiabetes')
+      df = PimaIndiansDiabetes
+      
+      control = trainControl(method = 'cv',
+                             number = 10)
+      
+      model = train(diabetes ~ .,
+                    data = df,
+                    method = 'ctree',
+                    trControl = control)
+      pred = predict(model, df, type = 'prob')
+      curva <- roc(df$diabetes, pred$pos)
+      plot(curva, col = "blue")
     })
     
 })
