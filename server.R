@@ -27,6 +27,7 @@ shinyServer(function(input, output) {
                        header = TRUE,
                        sep = input$sep,
                        quote = '"')
+        return(head(df))
     })
     
     output$ROC = renderPlot({
