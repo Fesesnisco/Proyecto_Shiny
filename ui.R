@@ -13,7 +13,7 @@ library(shiny)
 shinyUI(fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Hacedor de curvas ROC y AUC"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
@@ -26,8 +26,7 @@ shinyUI(fluidPage(
                                  ".csv")),
             # Horizontal line ----
             tags$hr(),
-            # Input: Checkbox if file has header ----
-            checkboxInput("header", "Header", TRUE),
+        
             
             # Input: Select separator ----
             radioButtons("sep", "Separator",
@@ -36,21 +35,12 @@ shinyUI(fluidPage(
                                      Tab = "\t"),
                          selected = ","),
             
-            # Input: Select quotes ----
-            radioButtons("quote", "Quote",
-                         choices = c(None = "",
-                                     "Double Quote" = '"',
-                                     "Single Quote" = "'"),
-                         selected = '"'),
+            
             
             # Horizontal line ----
             tags$hr(),
+
             
-            # Input: Select number of rows to display ----
-            radioButtons("disp", "Display",
-                         choices = c(Head = "head",
-                                     All = "all"),
-                         selected = "head"),
         
             pickerInput(
                 inputId = "modelo",
