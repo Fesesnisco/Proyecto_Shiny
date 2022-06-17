@@ -50,8 +50,15 @@ shinyUI(fluidPage(
             radioButtons("disp", "Display",
                          choices = c(Head = "head",
                                      All = "all"),
-                         selected = "head")
-            
+                         selected = "head"),
+        
+            pickerInput(
+                inputId = "modelo",
+                label = "Seleccione el modelo que desee",
+                choices = c("svmLinear3","bayesglm", "rf","xgbLinear","bagEarth","treebag",
+                            "ctree","glm","lm","ranger","cubist","knn"),
+                selected = c("svmLinear3"),
+                multiple = FALSE)
         ),
         
         # Main panel for displaying outputs ----
@@ -59,6 +66,8 @@ shinyUI(fluidPage(
             
             # Output: Data file ----
             tableOutput("contents")
+            
+            
             
         )
         
