@@ -8,59 +8,49 @@
 #
 
 library(shiny)
+library(shinyWidgets)
+library(shinydashboard)
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
 
-    # Application title
-    titlePanel("Hacedor de curvas ROC y AUC"),
 
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            # Input: Select a file ----
-            fileInput("file1", "Choose CSV File",
-                      multiple = TRUE,
-                      accept = c("text/csv",
-                                 "text/comma-separated-values,text/plain",
-                                 ".csv")),
-            # Horizontal line ----
-            tags$hr(),
-        
-            
-            # Input: Select separator ----
-            radioButtons("sep", "Separator",
-                         choices = c(Comma = ",",
-                                     Semicolon = ";",
-                                     Tab = "\t"),
-                         selected = ","),
-            
-            
-            
-            # Horizontal line ----
-            tags$hr(),
-
-            
-        
-            pickerInput(
-                inputId = "modelo",
-                label = "Seleccione el modelo que desee",
-                choices = c("svmLinear3","bayesglm", "rf","xgbLinear","bagEarth","treebag",
-                            "ctree","glm","lm","ranger","cubist","knn"),
-                selected = c("svmLinear3"),
-                multiple = FALSE)
-        ),
-        
-        # Main panel for displaying outputs ----
-        mainPanel(
-            
-            # Output: Data file ----
-            tableOutput("contents")
-            
-            
-            
+shinyUI(dashboardPage(
+    dashboardHeader(title = "Hacedor de curvas ROC y AUC"),
+    dashboardSidebar(sidebarMenu(
+        menuItem("Import", tabName = "import", icon = icon("dashboard")),
+        menuItem("Widgets", tabName = "widgets", icon = icon("th"))
+    )),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "import",
+                    fluidRow(
+                        sidebarLayout(
+                            sidebarPanel(
+                                fileInput("file1", "Choose CSV File",
+                                          multiple = TRUE,
+                                          accept = c("text/csv",
+                                                     "text/comma-separated-values,text/plain",
+                                                     ".csv")),
+                                tags$hr(),
+                                
+                                radioButtons("sep", "Separator",
+                                             choices = c(Comma = ",",
+                                                         Semicolon = ";",
+                                                         Tab = "\t"),
+                                             selected = ","),
+                                tags$hr(),
+                                
+                                pickerInput(
+                                    inputId = "modelo",
+                                    label = "Seleccione el modelo que desee",
+                                    choices = c("svmLinear3","bayesglm", "rf","xgbLinear","bagEarth","treebag",
+                                                "ctree","glm","lm","ranger","cubist","knn"),
+                                    selected = c("svmLinear3"),
+                                    multiple = FALSE)
+                                ),
+                            mainPanel(
+                                tableOutput("contents")
+            )
         )
-        
-    )
-)
-)
+        )),
+        tabItem(tabName = "widgets",
+                h2("Widgets tab content"))))))
