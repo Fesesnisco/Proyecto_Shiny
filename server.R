@@ -11,6 +11,7 @@ library(shiny)
 library(caret)
 library(pROC)
 library(ModelMetrics)
+library(plotly)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -27,7 +28,27 @@ shinyServer(function(input, output) {
                        header = TRUE,
                        sep = input$sep,
                        quote = '"')
-        return(head(df))
+        return(head(df,30/2))
+    })
+    
+    output$plot_AUC <- renderPlotly({
+      df <- read.csv(input$file1$datapath,
+                     header = TRUE,
+                     sep = input$sep,
+                     quote = '"')
+      plot_ly(data=df, x=~sepal.length, type="histogram")
+      
+      
+    })
+    
+    output$plot_ROC <- renderPlotly({
+      df <- read.csv(input$file1$datapath,
+                     header = TRUE,
+                     sep = input$sep,
+                     quote = '"')
+      plot_ly(data=df, x=~petal.length, type="histogram")
+      
+      
     })
     
     output$ROC = renderPlot({
@@ -41,11 +62,12 @@ shinyServer(function(input, output) {
       
       model = train(diabetes ~ .,
                     data = df,
-                    method = 'ctree',
+                    method = input$modelo,
                     trControl = control)
       pred = predict(model, df, type = 'prob')
       curva <- roc(df$diabetes, pred$pos)
       plot(curva, col = "blue")
     })
+    
     
 })
