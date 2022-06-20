@@ -11,6 +11,7 @@ library(shiny)
 library(shinyWidgets)
 library(shinydashboard)
 library(plotly)
+library(shinyBS)
 
 
 
@@ -20,7 +21,14 @@ shinyUI(dashboardPage(
     dashboardSidebar(width = 350,
                      sidebarMenu(
         menuItem("Import", tabName = "import", icon = icon("folder-open",lib = "glyphicon")),
-        menuItem("Models", tabName = "choosing_model", icon = icon("blackboard",lib = "glyphicon"))
+        menuItem("Models", icon = icon('tasks'),
+                 
+                 menuSubItem('One model',
+                             tabName = 'choosing_model',
+                             icon = icon('sitemap')),
+                 menuSubItem('Comparing models',
+                             tabName = 'comparing_model',
+                             icon = icon('sitemap')))
     )),
     dashboardBody(
         tags$head(
@@ -49,63 +57,116 @@ shinyUI(dashboardPage(
             border-right-color:#FF8000;
             border-top-color:#FF8000;
             }
+            
+            .wrapper {
+            height: auto !important; 
+            position:relative; 
+            overflow-x:hidden; 
+            overflow-y:hidden;
+            }
 
-                                    ")),
+                                    "),
+                       "@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"
+                       ),
             tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
+    
         tabItems(
             tabItem(tabName = "import",
                     box(
                         title = "Import CSV",
-                        width = 4,
+                        width = 12,
                         status = "primary",
                         solidHeader = T,
                         collapsible = T,
                         
-                        fileInput("file1", "Choose CSV File",
-                                  multiple = F,
-                                  accept = c("text/csv",
-                                             "text/comma-separated-values,text/plain",
-                                             ".csv")),
-                        tags$hr(),
-                        radioButtons("sep", "Separator",
-                                     choices = c(Comma = ",",
-                                                 Semicolon = ";",
-                                                 Tab = "\t"),
-                                     selected = ","),
-                        tags$hr()
+                        fluidRow(
+                            column(3, h4(icon("upload"), "Upload"))), 
+                        
+                        fluidRow(
+                            column(6,
+                                   fileInput("file1", "Choose CSV File",
+                                                    multiple = F,
+                                                    accept = c("text/csv",
+                                                               "text/comma-separated-values,text/plain",
+                                                               ".csv"))),
+                            column(6,
+                                   radioButtons("sep", "Separator",
+                                                choices = c(Comma = ",",
+                                                            Semicolon = ";",
+                                                            Tab = "\t"),
+                                                selected = ",")))
                         ),
                     box(title = "Data head",
-                        width = 8,
+                        width = 12,
                         status = "success",
                         solidHeader = T,
                         collapsible = T,
-                        tableOutput("contents"))),
+                        
+                        fluidRow(
+                            column(12,
+                                DT::DTOutput("contents"))))),
             
             tabItem(tabName = "choosing_model",
                     box(
                         title = "Models",
-                        width = 2,
+                        width = 3,
                         status = "primary",
                         solidHeader = T,
                         
                         pickerInput(
                             inputId = "modelo",
                             label = "Choose a model",
-                            choices = c("svmLinear3","bayesglm", "rf","xgbLinear","bagEarth",
-                                                 "treebag","ctree","glm","lm","ranger","cubist","knn"),
-                            selected = c("svmLinear3"),
-                            multiple = FALSE)),
+                            choices = c("bayesglm", "rf","xgbLinear","bagEarth","treebag","ctree","glm","knn"),
+                            selected = c("ctree"),
+                            multiple = FALSE),
+                        numericInput("n", "Choose k-fold for cross-validation", 10),
+                        actionButton("b1", "Start", icon = icon('play'),
+                                     style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")),
                     
                     fluidRow(
-                        tabBox(id="tabchart1",side = "right",
-                               tabPanel("ROC", plotOutput("ROC")),
-                               tabPanel("AUC", plotlyOutput("plot_AUC")),
-                        )
+                        box(title="ROC Curve",
+                            width = 5,
+                            status = "primary",
+                            solidHeader = T,
+                            tabPanel("ROC", plotOutput("plotROC")),
+                               
+                        ),
+                        valueBoxOutput("infoBox", width = 3)
                     )
                         
                 
-                )
+                ),
+            tabItem(tabName = "comparing_model",
+                    box(
+                        title = "Models",
+                        width = 3,
+                        status = "primary",
+                        solidHeader = T,
+                        
+                        pickerInput(
+                            inputId = "varios_modelos",
+                            label = "Choose minimum two models",
+                            choices = c("bayesglm", "rf","xgbLinear","bagEarth","treebag","ctree","glm","knn"),
+                            selected = c("ctree"),
+                            multiple = TRUE),
+                        numericInput("n2", "Choose k-fold for cross-validation", 10),
+                        actionButton("b2", "Start", icon = icon('play'),
+                                     style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")),
+                    
+                    fluidRow(
+                        box(title="ROC Curve",
+                            width = 8,
+                            status = "primary",
+                            solidHeader = T,
+                            tabPanel("ROC", plotOutput("multiROC")),
+                            
+                        ),
+                        valueBoxOutput("infoBox2", width = 3)
+                    )
+                    
+                    
+            )
             )
     )
     )
