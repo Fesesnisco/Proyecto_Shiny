@@ -17,7 +17,37 @@ library(shinyBS)
 
 shinyUI(dashboardPage(
     dashboardHeader(title = "Hacedor de curvas ROC y AUC",
-                    titleWidth = 350),
+                    titleWidth = 350,
+                    dropdownMenu(
+                        type = "notifications", 
+                        headerText = strong("HELP"), 
+                        icon = icon("question"), 
+                        badgeStatus = NULL,
+                        notificationItem(
+                            text = ('Import a file in CSV format by clicking on the browse button.'),
+                            icon = icon("upload")
+                        ),
+                        notificationItem(
+                            text = ('Choose the type of separator your csv file uses.'),
+                            icon = icon("asterisk")
+                        ),
+                        notificationItem(
+                            text = ('You will be able to visualise the resulting data table. Select the column you are going to use as Y variable.'),
+                            icon = icon("hdd",lib = "glyphicon")
+                        ),
+                        notificationItem(
+                            text = ('Now we can move on to the models. Click on Models.'),
+                            icon = icon("tasks")
+                        ),
+                        notificationItem(
+                            text = ('One model: choose a model, the k-fold for the cross validation and click on the Start button. The ROC curve and the AUC obtained are shown.'),
+                            icon = icon("sitemap")
+                        ),
+                        notificationItem(
+                            text = ('Comparing models: choose more than one model and the k-fold for the cross-validation. Click on the Start button and a plot with the ROC curves of each model is displayed.'),
+                            icon = icon("sitemap")
+                        )),
+                    tags$li(class="dropdown",tags$a(href="https://github.com/Fesesnisco/Proyecto_Shiny", icon("github"), "Source Code", target="_blank"))),
     dashboardSidebar(width = 350,
                      sidebarMenu(
         menuItem("Import", tabName = "import", icon = icon("folder-open",lib = "glyphicon")),
@@ -66,7 +96,7 @@ shinyUI(dashboardPage(
             }
 
                                     "),
-                       "@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"
+                       HTML("@import url(https://use.fontawesome.com/releases/v6.0.0/css/all.css);")
                        ),
             tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),

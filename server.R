@@ -18,7 +18,7 @@ paleta = c("#ff2020", "#fe3420", "#fd4320", "#fb4f1f", "#fa5a1f", "#f8631f", "#f
             "#c2e31a", "#bee819", "#b8ee19", "#b3f419", "#adf918", "#a6ff18")
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
   
   # Funcion que lee el fichero con las opciones que hemos escogido
     
@@ -133,5 +133,6 @@ shinyServer(function(input, output) {
         color="orange") 
       }
     })
+
   
 })
