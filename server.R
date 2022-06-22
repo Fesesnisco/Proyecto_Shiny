@@ -60,7 +60,7 @@ shinyServer(function(input, output,session) {
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
       
-      if (input$train_tipo == 'coste'){
+      if (input$costs == 'with_costs'){
         
         coste_caret = function(data, lev = c('pos', 'neg'), model = NULL){
           cost = 0
