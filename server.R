@@ -133,6 +133,29 @@ shinyServer(function(input, output,session) {
         color="orange") 
       }
     })
+    
+  
+    observeEvent("", {
+      showModal(modalDialog(
+        includeHTML("intro_text.html"),
+        easyClose = TRUE,
+        footer = tagList(
+          actionButton(inputId = "intro", label = "INTRODUCTION TOUR", icon = icon("info-circle"))
+        )
+      ))
+    })
+    
+    observeEvent(input$intro,{
+      removeModal()
+    })
+    
+    # show intro tour
+    observeEvent(input$intro,
+                 introjs(session, options = list("nextLabel" = "Continue",
+                                                 "prevLabel" = "Previous",
+                                                 "doneLabel" = "Alright. Let's go"))
+    )
+    
 
   
 })

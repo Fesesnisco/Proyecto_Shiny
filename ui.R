@@ -12,6 +12,8 @@ library(shinyWidgets)
 library(shinydashboard)
 library(plotly)
 library(shinyBS)
+library(shinyjs)
+library(rintrojs)
 
 
 
@@ -61,6 +63,8 @@ shinyUI(dashboardPage(
                              icon = icon('sitemap')))
     )),
     dashboardBody(
+        useShinyjs(),
+        introjsUI(),
         tags$head(
             # Formato de las box
             tags$style(HTML("
@@ -103,7 +107,10 @@ shinyUI(dashboardPage(
     
         tabItems(
             tabItem(tabName = "import",
-                    box(
+                    introBox(
+                        data.step = 1,
+                        data.intro = "You can preview your visual abstract here.",
+                        box(
                         title = "Import CSV",
                         width = 12,
                         status = "primary",
@@ -115,18 +122,24 @@ shinyUI(dashboardPage(
                         
                         fluidRow(
                             column(6,
-                                   fileInput("file1", "Choose CSV File",
-                                                    multiple = F,
-                                                    accept = c("text/csv",
-                                                               "text/comma-separated-values,text/plain",
-                                                               ".csv"))),
+                                   introBox(
+                                       data.step = 1,
+                                       data.intro = "Import a file in CSV format by clicking on the browse button.",
+                                       fileInput("file1", "Choose CSV File",
+                                                 multiple = F,
+                                                 accept = c("text/csv",
+                                                            "text/comma-separated-values,text/plain",
+                                                            ".csv")))),
                             column(6,
+                                   introBox(
+                                       data.step = 2,
+                                       data.intro = "Choose the type of separator your csv file uses.",
                                    radioButtons("sep", "Separator",
                                                 choices = c(Comma = ",",
                                                             Semicolon = ";",
                                                             Tab = "\t"),
-                                                selected = ",")))
-                        ),
+                                                selected = ","))))
+                        )),
                     box(title = "Data head",
                         width = 12,
                         status = "success",
@@ -135,7 +148,10 @@ shinyUI(dashboardPage(
                         
                         fluidRow(
                             column(12,
-                                DT::DTOutput("contents"))))),
+                                   introBox(
+                                       data.step = 3,
+                                       data.intro = "Once the file has been uploaded, select the column you are going to use as Y variable.",  
+                                       DT::DTOutput("contents")))))),
             
             tabItem(tabName = "choosing_model",
                     box(

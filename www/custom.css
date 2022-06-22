@@ -101,5 +101,16 @@ top:-50px;
 
 }
 
+#intro {
+    margin-bottom: 0;
+    align-items: center;
+    display: block;
+    margin: 0 auto;
+    background: #00a8a8;
+    color: white;
+    min-width: 25%;
+    border-color: white
+}
+
 
 
