@@ -154,60 +154,32 @@ shinyUI(dashboardPage(
                                        DT::DTOutput("contents")))))),
             
             tabItem(tabName = "choosing_model",
-                    fluidRow(
-                        column(12,
-                               box(
-                                   title = "Models",
-                                   width = 3,
-                                   status = "primary",
-                                   solidHeader = T,
-                                   
-                                   pickerInput(
-                                       inputId = "modelo",
-                                       label = "Choose a model",
-                                       choices = c("bayesglm", "rf","xgbLinear","bagEarth","treebag","ctree","glm","knn"),
-                                       selected = c("ctree"),
-                                       multiple = FALSE),
-                                   
-                                   numericInput("n", "Choose k-fold for cross-validation", 10),
-                                   actionButton("b1", "Start", icon = icon('play'),
-                                                style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
-                                   ),
-                               box(
-                                   title="ROC Curve",
-                                   width = 6,
-                                   status = "primary",
-                                   solidHeader = T,
-                                   tabPanel("ROC", plotOutput("plotROC")),
-                                   
-                               ),
-                               valueBoxOutput("infoBox", width = 3),
-                               
-                        )),
-                               
-                    fluidRow(
-                        column(12,
-                               box(
-                               title = "Costs",
-                               width = 3,
-                               status = "primary",
-                               solidHeader = T,
-                               radioButtons("costs", "Select:",
-                                                choices = c("Without costs" = "without_costs",
-                                                            "Model costs trained with accuracy" = "with_accur",
-                                                            "Model costs trained with costs" = "with_costs" ),
-                                                selected = "without_costs"),
-                               br(),
-                               tableOutput("value"),
-                               uiOutput("TP"),
-                               uiOutput("TN"),
-                               uiOutput("FP"),
-                               uiOutput("FN")))),
-                    
+                    box(
+                        title = "Models",
+                        width = 3,
+                        status = "primary",
+                        solidHeader = T,
                         
-                        
+                        pickerInput(
+                            inputId = "modelo",
+                            label = "Choose a model",
+                            choices = c("bayesglm", "rf","xgbLinear","bagEarth","treebag","ctree","glm","knn"),
+                            selected = c("ctree"),
+                            multiple = FALSE),
+                        numericInput("n", "Choose k-fold for cross-validation", 10),
+                        actionButton("b1", "Start", icon = icon('play'),
+                                     style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")),
                     
-                    
+                    fluidRow(
+                        box(title="ROC Curve",
+                            width = 5,
+                            status = "primary",
+                            solidHeader = T,
+                            tabPanel("ROC", plotOutput("plotROC")),
+                               
+                        ),
+                        valueBoxOutput("infoBox", width = 3)
+                    )
                         
                 
                 ),

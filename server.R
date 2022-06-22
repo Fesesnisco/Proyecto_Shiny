@@ -60,13 +60,48 @@ shinyServer(function(input, output,session) {
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
       
-      control = trainControl(method = 'cv',
-                             number = input$n)
-      
-      model = train(x = df[,-index],
-                    y = df[,index],
-                    method = input$modelo,
-                    trControl = control)
+      if (input$costs == 'with_costs'){
+        
+        coste_caret = function(data, lev = c('pos', 'neg'), model = NULL){
+          cost = 0
+          for (i in 1:nrow(data)){
+            #data$amount = as.numeric(tr$amount)
+            if (data[i,'obs'] == 'pos'){
+              if (data[i,'pred'] == 'pos'){
+                cost = cost + input$TP
+              } else {
+                cost = cost + input$FN
+              }
+            } else {
+              if (data[i,'pred'] == 'pos'){
+                cost = cost + input$FP
+              } else {
+                cost = cost + input$TN
+              }
+            }
+          }
+          names(cost) = c('Coste')
+          cost
+        }
+        
+        control = trainControl(method = 'cv',
+                               number = input$n,
+                               summaryFunction = coste_caret)
+        
+        model = train(x = df[,-index],
+                      y = df[,index],
+                      method = input$modelo,
+                      trControl = control)
+        
+      } else {
+        control = trainControl(method = 'cv',
+                               number = input$n)
+        
+        model = train(x = df[,-index],
+                      y = df[,index],
+                      method = input$modelo,
+                      trControl = control)
+      }
       pred = predict(model, df, type = 'prob')
       curva <- roc(df[,index], pred$pos)
       return(curva)
@@ -134,21 +169,6 @@ shinyServer(function(input, output,session) {
       }
     })
     
-    output$infobox1 <- renderValueBox({
-      if (input$b3){
-        valor = 6
-      }
-      else {valor = 'Sin costes'}
-      if(input$b1){
-        curva = isolate(ROC())
-        valueBox(
-          value = valor,
-          subtitle = "Costes",
-          icon=icon("euro", lib = "glyphicon"),
-          color="red") 
-      }
-    })
-    
   
     observeEvent("", {
       showModal(modalDialog(
@@ -171,24 +191,6 @@ shinyServer(function(input, output,session) {
                                                  "doneLabel" = "Alright. Let's go"))
     )
     
-    observe({
-      if (input$costs == "without_costs"){
-        return()
-      }
-      isolate({
-        output$value <-renderTable({
-          num.inputs.col1 <- paste0("<input id='c1n", 1:2, "' class='shiny-bound-input' type='number' value='1'>")
-          num.inputs.col2 <- paste0("<input id='c2n", 1:2, "' class='shiny-bound-input' type='number' value='1'>")
-          data.frame(num.inputs.col1, num.inputs.col2)
-          
-        }, sanitize.text.function = function(x) x)
-      })
-    })
-    
-    output$TP <-renderUI(h4(input$c1n1))
-    output$TN <-renderUI(h4(input$c2n2))
-    output$FP <-renderUI(h4(input$c1n2))
-    output$FN <-renderUI(h4(input$c2n1))
-    
+
   
 })
