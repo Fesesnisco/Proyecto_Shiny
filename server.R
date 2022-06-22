@@ -60,8 +60,38 @@ shinyServer(function(input, output,session) {
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
       
-      control = trainControl(method = 'cv',
-                             number = input$n)
+      if (input$costs == 'with_costs'){
+        
+        coste_caret = function(data, lev = c('pos', 'neg'), model = NULL){
+          cost = 0
+          for (i in 1:nrow(data)){
+            #data$amount = as.numeric(tr$amount)
+            if (data[i,'obs'] == 'pos'){
+              if (data[i,'pred'] == 'pos'){
+                cost = cost + input$TP
+              } else {
+                cost = cost + input$FN
+              }
+            } else {
+              if (data[i,'pred'] == 'pos'){
+                cost = cost + input$FP
+              } else {
+                cost = cost + input$TN
+              }
+            }
+          }
+          names(cost) = c('Coste')
+          cost
+        }
+        
+        control = trainControl(method = 'cv',
+                               number = input$n,
+                               summaryFunction = coste_caret)
+        
+      } else {
+        control = trainControl(method = 'cv',
+                               number = input$n)
+      }
       
       model = train(x = df[,-index],
                     y = df[,index],
