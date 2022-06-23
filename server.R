@@ -11,6 +11,7 @@ library(shiny)
 library(caret)
 library(pROC)
 library(ModelMetrics)
+library(shinycustomloader)
 library(plotly)
 paleta = c("#ff2020", "#fe3420", "#fd4320", "#fb4f1f", "#fa5a1f", "#f8631f", "#f76c1f", "#f5741f", 
             "#f37c1e", "#f1841e", "#ef8b1e", "#ed921e", "#eb991d", "#e99f1d", "#e6a61d", "#e3ac1d", 
@@ -60,7 +61,7 @@ shinyServer(function(input, output,session) {
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
       
-      if (input$b1){
+      if (input$b1 || input$b3){
         
       
       if (input$costs == 'with_costs'){
@@ -157,9 +158,9 @@ shinyServer(function(input, output,session) {
     
     output$multiROC = renderPlot({
       if(input$b2){
-      df = readDf()
+      df = isolate(readDf())
       req(input$contents_columns_selected)
-      index = input$contents_columns_selected + 1 # se obtiene el indice de la columna selecciona y se le suma 1 (sale uno menos siempre)
+      index = isolate(input$contents_columns_selected + 1) # se obtiene el indice de la columna selecciona y se le suma 1 (sale uno menos siempre)
       
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
@@ -193,7 +194,7 @@ shinyServer(function(input, output,session) {
 
               # Funcion que dibuja la curva ROC pasandole la funcion de ROC anterior
     output$plotROC = renderPlot({
-      if(input$b1){   # el if es para que se ejecute cuando se aprete el boton, al igual que el isolate()
+      if(input$b1 || input$b3){   # el if es para que se ejecute cuando se aprete el boton, al igual que el isolate()
       req(input$contents_columns_selected)
       curva = isolate(curva())
       return(plot(curva, col = "#00a8a8"))
@@ -202,7 +203,7 @@ shinyServer(function(input, output,session) {
     
     
     output$infoBox <- renderValueBox({
-      if(input$b1){
+      if(input$b1 || input$b3){
       curva = isolate(curva())
       valueBox(
         value = round(curva$auc[1],3),
@@ -213,7 +214,7 @@ shinyServer(function(input, output,session) {
     })
     
     output$infoBox1 <- renderValueBox({
-      if(input$b1){
+      if(input$b1 || input$b3){
         valor = 'Without costs'
         if (input$costs == "with_costs"){
           model = isolate(ROC())

@@ -10,6 +10,7 @@
 library(shiny)
 library(shinyWidgets)
 library(shinydashboard)
+library(shinycustomloader)
 library(plotly)
 library(shinyBS)
 library(shinyjs)
@@ -187,7 +188,9 @@ shinyUI(dashboardPage(
                                                                          "Model costs trained with costs" = "with_costs" ),
                                                              selected = "without_costs"),
                                                 br(),
-                                                tableOutput("value")
+                                                tableOutput("value"),
+                                                actionButton("b3", "Start", icon = icon('play'),
+                                                             style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
                                                 )
                                        )
                                    ),
@@ -196,7 +199,7 @@ shinyUI(dashboardPage(
                                    width = 6,
                                    status = "primary",
                                    solidHeader = T,
-                                   tabPanel("ROC", plotOutput("plotROC")),
+                                   tabPanel("ROC", withLoader(plotOutput("plotROC"), type = 'html',loader = 'loader1')),
                                    
                                    ),
                                valueBoxOutput("infoBox", width = 3),
@@ -232,7 +235,7 @@ shinyUI(dashboardPage(
                             width = 8,
                             status = "primary",
                             solidHeader = T,
-                            tabPanel("ROC", plotOutput("multiROC")),
+                            tabPanel("ROC", withLoader(plotOutput("multiROC"), type = 'html',loader = 'loader1')),
                             
                         ),
                         valueBoxOutput("infoBox2", width = 3)
