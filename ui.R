@@ -18,8 +18,8 @@ library(rintrojs)
 
 
 shinyUI(dashboardPage(
-    dashboardHeader(title = "Hacedor de curvas ROC y AUC",
-                    titleWidth = 350,
+    dashboardHeader(title = "NombreApp",
+                    titleWidth = 200,
                     dropdownMenu(
                         type = "notifications", 
                         headerText = strong("HELP"), 
@@ -54,7 +54,7 @@ shinyUI(dashboardPage(
                             icon = icon("sitemap")
                         )),
                     tags$li(class="dropdown",tags$a(href="https://github.com/Fesesnisco/Proyecto_Shiny", icon("github"), "Source Code", target="_blank"))),
-    dashboardSidebar(width = 350,
+    dashboardSidebar(width = 200,
                      sidebarMenu(
         menuItem("Import", tabName = "import", icon = icon("folder-open",lib = "glyphicon")),
         menuItem("Models", icon = icon('tasks'),
@@ -161,21 +161,35 @@ shinyUI(dashboardPage(
                     fluidRow(
                         column(12,
                                box(
-                                   title = "Models",
+                                   title = "Settings",
                                    width = 3,
                                    status = "primary",
                                    solidHeader = T,
                                    
-                                   pickerInput(
-                                       inputId = "modelo",
-                                       label = "Choose a model",
-                                       choices = c("bayesglm", "rf","xgbLinear","bagEarth","treebag","ctree","glm","knn"),
-                                       selected = c("ctree"),
-                                       multiple = FALSE),
-                                   
-                                   numericInput("n", "Choose k-fold for cross-validation", 10),
-                                   actionButton("b1", "Start", icon = icon('play'),
-                                                style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
+                                   tabsetPanel(
+                                       tabPanel("Models",
+                                                pickerInput(
+                                                    inputId = "modelo",
+                                                    label = "Choose a model",
+                                                    choices = c("bayesglm", "rf","xgbLinear","bagEarth",
+                                                                "treebag","ctree","glm","knn"),
+                                                    selected = c("ctree"),
+                                                    multiple = FALSE),
+                                                
+                                                numericInput("n", "Choose k-fold for cross-validation", 10),
+                                                actionButton("b1", "Start", icon = icon('play'),
+                                                             style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
+                                                ),
+                                       tabPanel("Costs",
+                                                radioButtons("costs", "Select:",
+                                                             choices = c("Without costs" = "without_costs",
+                                                                         "Model costs trained with accuracy" = "with_accur",
+                                                                         "Model costs trained with costs" = "with_costs" ),
+                                                             selected = "without_costs"),
+                                                br(),
+                                                tableOutput("value")
+                                                )
+                                       )
                                    ),
                                box(
                                    title="ROC Curve",
@@ -184,28 +198,12 @@ shinyUI(dashboardPage(
                                    solidHeader = T,
                                    tabPanel("ROC", plotOutput("plotROC")),
                                    
-                               ),
+                                   ),
                                valueBoxOutput("infoBox", width = 3),
                                valueBoxOutput("infoBox1", width = 3),
                                
-                        )),
-                               
-                    fluidRow(
-                        column(12,
-                               box(
-                               title = "Costs",
-                               width = 5,
-                               status = "primary",
-                               solidHeader = T,
-                               radioButtons("costs", "Select:",
-                                                choices = c("Without costs" = "without_costs",
-                                                            "Model costs trained with accuracy" = "with_accur",
-                                                            "Model costs trained with costs" = "with_costs" ),
-                                                selected = "without_costs"),
-                               br(),
-                               tableOutput("value")))),
-                    
-                        
+                               )
+                        ), 
                         
                     
                     

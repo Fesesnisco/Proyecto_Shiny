@@ -214,7 +214,7 @@ shinyServer(function(input, output,session) {
     
     output$infoBox1 <- renderValueBox({
       if(input$b1){
-        valor = 'Sin costes'
+        valor = 'Without costs'
         if (input$costs == "with_costs"){
           model = isolate(ROC())
           valor = isolate(min(model$results[,"Coste"]))
