@@ -46,6 +46,10 @@ shinyUI(dashboardPage(
                             icon = icon("sitemap")
                         ),
                         notificationItem(
+                            text = ('In case you want to use costs for the model, select the desired cost option and enter the required values in the cost matrix.'),
+                            icon = icon("dollar")
+                        ),
+                        notificationItem(
                             text = ('Comparing models: choose more than one model and the k-fold for the cross-validation. Click on the Start button and a plot with the ROC curves of each model is displayed.'),
                             icon = icon("sitemap")
                         )),
@@ -182,6 +186,7 @@ shinyUI(dashboardPage(
                                    
                                ),
                                valueBoxOutput("infoBox", width = 3),
+                               valueBoxOutput("infoBox1", width = 3),
                                
                         )),
                                
@@ -189,7 +194,7 @@ shinyUI(dashboardPage(
                         column(12,
                                box(
                                title = "Costs",
-                               width = 3,
+                               width = 5,
                                status = "primary",
                                solidHeader = T,
                                radioButtons("costs", "Select:",
@@ -198,11 +203,7 @@ shinyUI(dashboardPage(
                                                             "Model costs trained with costs" = "with_costs" ),
                                                 selected = "without_costs"),
                                br(),
-                               tableOutput("value"),
-                               uiOutput("TP"),
-                               uiOutput("TN"),
-                               uiOutput("FP"),
-                               uiOutput("FN")))),
+                               tableOutput("value")))),
                     
                         
                         

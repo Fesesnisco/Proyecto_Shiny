@@ -60,6 +60,9 @@ shinyServer(function(input, output,session) {
       df[,index] = as.factor(df[,index])
       df[,index] = ifelse(df[,index] == 1, 'pos', 'neg') # se cambian los 0 y 1 por neg y pos
       
+      if (input$b1){
+        
+      
       if (input$costs == 'with_costs'){
         
         coste_caret = function(data, lev = c('pos', 'neg'), model = NULL){
@@ -68,15 +71,15 @@ shinyServer(function(input, output,session) {
             #data$amount = as.numeric(tr$amount)
             if (data[i,'obs'] == 'pos'){
               if (data[i,'pred'] == 'pos'){
-                cost = cost + input$TP
+                cost = cost + input$c1n1 #TP
               } else {
-                cost = cost + input$FN
+                cost = cost + input$c1n2 #FN
               }
             } else {
               if (data[i,'pred'] == 'pos'){
-                cost = cost + input$FP
+                cost = cost + input$c2n1 #FP
               } else {
-                cost = cost + input$TN
+                cost = cost + input$c2n2 #TN
               }
             }
           }
@@ -97,10 +100,59 @@ shinyServer(function(input, output,session) {
                     y = df[,index],
                     method = input$modelo,
                     trControl = control)
+    }
+      return(model)
+      
+      
+    })
+    
+    curva = reactive({
+      index = input$contents_columns_selected + 1
+      df = readDf()
+      model = ROC()
       pred = predict(model, df, type = 'prob')
       curva <- roc(df[,index], pred$pos)
       return(curva)
+    })
+    
+    pred_with_costs = reactive({
+      index = input$contents_columns_selected + 1
+      df = readDf()
+      model = ROC()
+      df[,index] = as.factor(df[,index])
+      df[,index] = ifelse(df[,index] == 1, 'pos', 'neg')
+      pred_with_cost = cbind(df[index], predict(model, df))
+      colnames(pred_with_cost) = c('obs', 'pred')
+      return(pred_with_cost)
       
+      })
+    
+    coste_accuracy = reactive({
+      coste_accuracy<-cost_caret()
+      return(coste_accuracy)
+    })
+    
+    cost_caret = reactive({
+      data = pred_with_costs()
+      cost = 0
+      for (i in 1:nrow(data)){
+        #data$amount = as.numeric(tr$amount)
+        if (data[i,'obs'] == 'pos'){
+          if (data[i,'pred'] == 'pos'){
+            cost = cost + input$c1n1 #TP
+          } else {
+            cost = cost + input$c1n2 #FN
+          }
+        } else {
+          if (data[i,'pred'] == 'pos'){
+            cost = cost + input$c2n1 #FP
+          } else {
+            cost = cost + input$c2n2 #TN
+          }
+        }
+      }
+      names(cost) = c('Coste')
+      return(cost)
     })
     
     output$multiROC = renderPlot({
@@ -143,19 +195,15 @@ shinyServer(function(input, output,session) {
     output$plotROC = renderPlot({
       if(input$b1){   # el if es para que se ejecute cuando se aprete el boton, al igual que el isolate()
       req(input$contents_columns_selected)
-      curva = isolate(ROC())
+      curva = isolate(curva())
       return(plot(curva, col = "#00a8a8"))
       }
     })
     
-    # output$info1 = renderInfoBox({
-    #   curva = ROC()
-    #   infoBox("AUC", col = "orange",round(curva$auc[1],3), icon = icon("area-chart"))
-    # })
     
     output$infoBox <- renderValueBox({
       if(input$b1){
-      curva = isolate(ROC())
+      curva = isolate(curva())
       valueBox(
         value = round(curva$auc[1],3),
         subtitle = "AUC",
@@ -164,20 +212,25 @@ shinyServer(function(input, output,session) {
       }
     })
     
-    output$infobox1 <- renderValueBox({
-      if (input$b3){
-        valor = 6
-      }
-      else {valor = 'Sin costes'}
+    output$infoBox1 <- renderValueBox({
       if(input$b1){
-        curva = isolate(ROC())
+        valor = 'Sin costes'
+        if (input$costs == "with_costs"){
+          model = isolate(ROC())
+          valor = isolate(min(model$results[,"Coste"]))
+        }
+        else if (input$costs == "with_accur"){
+            valor = isolate(coste_accuracy())
+          }
+        
         valueBox(
           value = valor,
-          subtitle = "Costes",
-          icon=icon("euro", lib = "glyphicon"),
+          subtitle = "Costs",
+          icon=icon("dollar"),
           color="red") 
       }
     })
+    
     
   
     observeEvent("", {
@@ -203,22 +256,21 @@ shinyServer(function(input, output,session) {
     
     observe({
       if (input$costs == "without_costs"){
+        shinyjs::hide("value")
         return()
       }
+      
       isolate({
+        shinyjs::show("value")
         output$value <-renderTable({
-          num.inputs.col1 <- paste0("<input id='c1n", 1:2, "' class='shiny-bound-input' type='number' value='1'>")
-          num.inputs.col2 <- paste0("<input id='c2n", 1:2, "' class='shiny-bound-input' type='number' value='1'>")
-          data.frame(num.inputs.col1, num.inputs.col2)
+          pos <- paste0("<input id='c1n", 1:2, "' class='shiny-bound-input' type='number' value='0'>")
+          neg <- paste0("<input id='c2n", 1:2, "' class='shiny-bound-input' type='number' value='0'>")
+          data.frame(pos, neg)
           
         }, sanitize.text.function = function(x) x)
       })
     })
-    
-    output$TP <-renderUI(h4(input$c1n1))
-    output$TN <-renderUI(h4(input$c2n2))
-    output$FP <-renderUI(h4(input$c1n2))
-    output$FN <-renderUI(h4(input$c2n1))
+
     
   
 })
