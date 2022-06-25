@@ -19,7 +19,7 @@ library(rintrojs)
 
 
 shinyUI(dashboardPage(
-    dashboardHeader(title = "NombreApp",
+    dashboardHeader(title = "poli[Clasificador]",
                     titleWidth = 200,
                     dropdownMenu(
                         type = "notifications", 
@@ -181,16 +181,14 @@ shinyUI(dashboardPage(
                                                 actionButton("b1", "Start", icon = icon('play'),
                                                              style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
                                                 ),
-                                       tabPanel("Costs",
+                                       tabPanel("Costs", 
                                                 radioButtons("costs", "Select:",
                                                              choices = c("Without costs" = "without_costs",
                                                                          "Model costs trained with accuracy" = "with_accur",
                                                                          "Model costs trained with costs" = "with_costs" ),
                                                              selected = "without_costs"),
                                                 br(),
-                                                tableOutput("value"),
-                                                actionButton("b3", "Start", icon = icon('play'),
-                                                             style="color: #fff; background-color: #00a8a8; border-color: #00a8a8")
+                                                tableOutput("value")
                                                 )
                                        )
                                    ),
