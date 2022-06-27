@@ -15,7 +15,11 @@ library(plotly)
 library(shinyBS)
 library(shinyjs)
 library(rintrojs)
-
+library(party)
+library(arm)
+library(earth)
+library(randomForest)
+library(xgboost)
 
 
 shinyUI(dashboardPage(

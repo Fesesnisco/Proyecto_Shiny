@@ -13,6 +13,12 @@ library(pROC)
 library(ModelMetrics)
 library(shinycustomloader)
 library(plotly)
+library(party)
+library(arm)
+library(earth)
+library(randomForest)
+library(xgboost)
+
 
 paleta = c("#ff2020", "#fe3420", "#fd4320", "#fb4f1f", "#fa5a1f", "#f8631f", "#f76c1f", "#f5741f", 
             "#f37c1e", "#f1841e", "#ef8b1e", "#ed921e", "#eb991d", "#e99f1d", "#e6a61d", "#e3ac1d", 
