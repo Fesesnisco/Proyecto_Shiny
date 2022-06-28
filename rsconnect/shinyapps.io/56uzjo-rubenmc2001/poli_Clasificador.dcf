@@ -5,10 +5,10 @@ account: 56uzjo-rubenmc2001
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6555290
-bundleId: 6046132
+bundleId: 6050206
 url: https://56uzjo-rubenmc2001.shinyapps.io/poli_Clasificador/
-when: 1656321333.19206
-lastSyncTime: 1656321333.19206
+when: 1656415009.65956
+lastSyncTime: 1656415009.65956
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: iris.csv|www/upv.png|www/upv1.png

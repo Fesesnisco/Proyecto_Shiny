@@ -18,7 +18,7 @@ library(arm)
 library(earth)
 library(randomForest)
 library(xgboost)
-
+library(shinyMatrix)
 
 paleta = c("#ff2020", "#fe3420", "#fd4320", "#fb4f1f", "#fa5a1f", "#f8631f", "#f76c1f", "#f5741f", 
             "#f37c1e", "#f1841e", "#ef8b1e", "#ed921e", "#eb991d", "#e99f1d", "#e6a61d", "#e3ac1d", 
@@ -99,15 +99,15 @@ shinyServer(function(input, output,session) {
             #data$amount = as.numeric(tr$amount)
             if (data[i,'obs'] == 'pos'){
               if (data[i,'pred'] == 'pos'){
-                cost = cost + input$c1n1 #TP
+                cost = cost + as.numeric(input$matrix[1,1]) #TP
               } else {
-                cost = cost + input$c1n2 #FN
+                cost = cost + as.numeric(input$matrix[1,2]) #FN
               }
             } else {
               if (data[i,'pred'] == 'pos'){
-                cost = cost + input$c2n1 #FP
+                cost = cost + as.numeric(input$matrix[2,1]) #FP
               } else {
-                cost = cost + input$c2n2 #TN
+                cost = cost + as.numeric(input$matrix[2,2]) #TN
               }
             }
           }
@@ -167,15 +167,15 @@ shinyServer(function(input, output,session) {
         #data$amount = as.numeric(tr$amount)
         if (data[i,'obs'] == 'pos'){
           if (data[i,'pred'] == 'pos'){
-            cost = cost + input$c1n1 #TP
+            cost = cost + as.numeric(input$matrix[1,1]) #TP
           } else {
-            cost = cost + input$c1n2 #FN
+            cost = cost + as.numeric(input$matrix[1,2]) #FN
           }
         } else {
           if (data[i,'pred'] == 'pos'){
-            cost = cost + input$c2n1 #FP
+            cost = cost + as.numeric(input$matrix[2,1]) #FP
           } else {
-            cost = cost + input$c2n2 #TN
+            cost = cost + as.numeric(input$matrix[2,2]) #TN
           }
         }
       }
@@ -285,12 +285,12 @@ shinyServer(function(input, output,session) {
     
     observe({
       if (input$costs == "without_costs"){
-        shinyjs::hide("value")
+        shinyjs::hide("matrix")
         return()
       }
       
       isolate({
-        shinyjs::show("value")
+        shinyjs::show("matrix")
         output$value <-renderTable({
           pos <- paste0("<input id='c1n", 1:2, "' class='shiny-bound-input' type='number' value='0'>")
           neg <- paste0("<input id='c2n", 1:2, "' class='shiny-bound-input' type='number' value='0'>")

@@ -20,6 +20,7 @@ library(arm)
 library(earth)
 library(randomForest)
 library(xgboost)
+library(shinyMatrix)
 
 
 shinyUI(dashboardPage(
@@ -192,7 +193,13 @@ shinyUI(dashboardPage(
                                                                          "Model costs trained with costs" = "with_costs" ),
                                                              selected = "without_costs"),
                                                 br(),
-                                                tableOutput("value")
+                                                matrixInput(
+                                                    "matrix",
+                                                    value = matrix(dimnames=list(c('P Predicted','N Predicted'), c('P Real','N Real')), nrow=2,ncol=2, data=c(0,0,0,0)),
+                                                    rows = list(names=T),
+                                                    cols = list(names=T),
+                                                    class='numeric'
+                                                ),
                                                 )
                                        )
                                    ),
